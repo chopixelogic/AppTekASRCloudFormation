@@ -1,0 +1,579 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "AppTekLicenseParameter": {
+            "Type": "String",
+            "Default": "Pixelogic-XVE2HB-KtLuPV-KtMRYN-GPOUBz-ZGYtNG",
+            "Description": "License string for ASR and ILS Engine."
+        },
+        "VPCIdParameter": {
+            "Type": "String",
+            "Default": "vpc-cdaa89a4",
+            "Description": "VPC ID of the EC2 Instances."
+        },
+        "SubnetIdParameter": {
+            "Type": "String",
+            "Default": "subnet-6fc0b214",
+            "Description": "Subnet ID of the EC2 Instances."
+        },
+        "SubnetGroupParameter": {
+            "Type": "String",
+            "Default": "public-subnet-group",
+            "Description": "Subnet Group used to create the DB."
+        },
+        "KeypairParameter": {
+            "Type": "String",
+            "Default": "apptek-keypair",
+            "Description": "Keypair for connecting to the instances."
+        }
+    },
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "2935f2b4-f23d-49ed-9a16-03f0dc987be4": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 710,
+                    "y": 290
+                },
+                "z": 0,
+                "embeds": [],
+                "isassociatedwith": [
+                    "02de0989-65e5-4b19-83b6-bdb1c6aa20d9",
+                    "a1827603-e656-42ba-a820-532aff481922"
+                ],
+                "dependson": [
+                    "1069f10a-843b-4a90-a1cb-9d13bd223c36",
+                    "edae632c-4196-471c-a8cd-8becde5fdb68"
+                ]
+            },
+            "02de0989-65e5-4b19-83b6-bdb1c6aa20d9": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 830,
+                    "y": 290
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "1069f10a-843b-4a90-a1cb-9d13bd223c36": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 570,
+                    "y": 290
+                },
+                "z": 0,
+                "embeds": [],
+                "isassociatedwith": [
+                    "a1827603-e656-42ba-a820-532aff481922"
+                ]
+            },
+            "a1827603-e656-42ba-a820-532aff481922": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 430,
+                    "y": 290
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "7f6d7205-c356-451a-9920-1051b7166055": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 710,
+                    "y": 180
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "92100587-ab55-42f1-9254-db433b8dc66c": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 710,
+                    "y": 390
+                },
+                "z": 0,
+                "embeds": [],
+                "isassociatedwith": [
+                    "2200fe7d-feeb-485c-94fd-d8770e612f5d",
+                    "a1827603-e656-42ba-a820-532aff481922"
+                ]
+            },
+            "2200fe7d-feeb-485c-94fd-d8770e612f5d": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 830,
+                    "y": 390
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "f8915176-943a-4af0-bbd8-d16ac9d3bddd": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 560,
+                    "y": 400
+                },
+                "z": 0,
+                "embeds": [],
+                "dependson": [
+                    "2935f2b4-f23d-49ed-9a16-03f0dc987be4"
+                ]
+            },
+            "c4ff5870-b9e4-47c4-be74-2b7d60ab3d8a": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 710,
+                    "y": 470
+                },
+                "z": 0,
+                "embeds": []
+            },
+            "edae632c-4196-471c-a8cd-8becde5fdb68": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 830,
+                    "y": 180
+                },
+                "z": 0,
+                "embeds": [],
+                "isassociatedwith": [
+                    "02de0989-65e5-4b19-83b6-bdb1c6aa20d9",
+                    "7f6d7205-c356-451a-9920-1051b7166055"
+                ]
+            }
+        }
+    },
+    "Resources": {
+        "Gateway": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "SecurityGroupIds": [
+                    {
+                        "Fn::GetAtt": [
+                            "GatewaySG",
+                            "GroupId"
+                        ]
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "SubnetIdParameter"
+                },
+                "InstanceType": "c5.xlarge",
+                "ImageId": "ami-0646569ced22d3b04",
+                "KeyName": {
+                    "Ref": "KeypairParameter"
+                },
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "VolumeType": "gp2",
+                            "DeleteOnTermination": "true",
+                            "VolumeSize": "30"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "# mount EFS folder\n",
+                                "sudo mount -t efs -o tls ",
+                                {
+                                    "Ref": "AppTekEFS"
+                                },
+                                ":/ /mnt/efs\n",
+                                "# create AppTek folder stubs\n",
+                                "sudo /home/ec2-user/setup.sh /mnt/efs/AppTek ",{
+                                    "Fn::GetAtt": ["AppTekDB","Endpoint.Address"]
+                                }," apptek AppTek2021 asrmongw\n",
+                                "# start docker\n",
+                                "sudo service docker start\n",
+                                "sudo docker restart asrmongw\n",
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "2935f2b4-f23d-49ed-9a16-03f0dc987be4"
+                }
+            },
+            "DependsOn": [
+                "AppTekDB",
+                "AppTekEFS",
+                "EFSMT"
+            ]
+        },
+        "AppTekDB": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "AllocatedStorage": 20,
+                "DBInstanceClass": "db.t2.micro",
+                "Engine": "postgres",
+                "EngineVersion": "12.5",
+                "MasterUsername": "apptek",
+                "MasterUserPassword": "AppTek2021",
+                "Port": "5432",
+                "DBSubnetGroupName": {
+                    "Ref": "SubnetGroupParameter"
+                },
+                "VPCSecurityGroups": [
+                    {
+                        "Fn::GetAtt": [
+                            "DatabaseSG",
+                            "GroupId"
+                        ]
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "1069f10a-843b-4a90-a1cb-9d13bd223c36"
+                }
+            }
+        },
+        "AppTekEFS": {
+            "Type": "AWS::EFS::FileSystem",
+            "Properties": {
+                "Encrypted": true,
+                "FileSystemTags": [
+                    {
+                        "Key": "Name",
+                        "Value": "AppTekEFS"
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "7f6d7205-c356-451a-9920-1051b7166055"
+                }
+            }
+        },
+        "ILS": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "SecurityGroupIds": [
+                    {
+                        "Fn::GetAtt": [
+                            "WorkerSG",
+                            "GroupId"
+                        ]
+                    }
+                ],
+                "SubnetId": {
+                    "Ref": "SubnetIdParameter"
+                },
+                "InstanceType": "c5.xlarge",
+                "ImageId": "ami-0a017d5b5eaa2d5b6",
+                "KeyName": {
+                    "Ref": "KeypairParameter"
+                },
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "VolumeType": "gp2",
+                            "DeleteOnTermination": "true",
+                            "VolumeSize": "50"
+                        }
+                    }
+                ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "sudo service docker start\n",
+                                "sudo docker rm ilsmon -f\n",
+                                "sudo docker run -d --name ilsmon --restart unless-stopped --env ASRMON_LOCALIP=",
+                                {
+                                    "Fn::GetAtt": [
+                                        "Gateway",
+                                        "PublicIp"
+                                    ]
+                                },
+                                " --env ASRMON_PRESENCE=http://",
+                                {
+                                    "Fn::GetAtt": [
+                                        "Gateway",
+                                        "PublicIp"
+                                    ]
+                                },
+                                ":5000/admin/asrmonreg --env MY_PRIVATE_IP=",
+                                {
+                                    "Fn::GetAtt": [
+                                        "Gateway",
+                                        "PublicIp"
+                                    ]
+                                },
+                                " --env APPTEK_LICENSE=",
+                                {
+                                    "Ref": "AppTekLicenseParameter"
+                                },
+                                " --env ASRMON_KEEPLOG=true -p 9090:9090 --mount type=bind,source=/home/ec2-user/ILS,target=/opt/apptek/ILS -d apptekils:prem-20210209\n",
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "92100587-ab55-42f1-9254-db433b8dc66c"
+                }
+            },
+            "DependsOn": [
+                "Gateway"
+            ]
+        },
+        "WorkerSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Worker: SSH, EFS and service port",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "9090",
+                        "ToPort": "9090",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "2049",
+                        "ToPort": "2049",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPCIdParameter"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "2200fe7d-feeb-485c-94fd-d8770e612f5d"
+                }
+            }
+        },
+        "DatabaseSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "ASR DB: PostgreSQL",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "5432",
+                        "ToPort": "5432",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPCIdParameter"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "a1827603-e656-42ba-a820-532aff481922"
+                }
+            }
+        },
+        "GatewaySG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "ASR Gateway: SSH, HTTP, EFS and service port",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "5000",
+                        "ToPort": "5000",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "2049",
+                        "ToPort": "2049",
+                        "CidrIp": "0.0.0.0/0"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "0.0.0.0/0"
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPCIdParameter"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "02de0989-65e5-4b19-83b6-bdb1c6aa20d9"
+                }
+            }
+        },
+        "ASRASG": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "LaunchTemplate": {
+                    "LaunchTemplateId": {
+                        "Ref": "ASRLaunchTemplate"
+                    },
+                    "Version": {
+                        "Fn::GetAtt": [
+                            "ASRLaunchTemplate",
+                            "LatestVersionNumber"
+                        ]
+                    }
+                },
+                "MaxSize": 10,
+                "MinSize": 1,
+                "DesiredCapacity": 1,
+                "VPCZoneIdentifier": [
+                    {
+                        "Ref": "SubnetIdParameter"
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "f8915176-943a-4af0-bbd8-d16ac9d3bddd"
+                }
+            },
+            "DependsOn": [
+                "Gateway"
+            ]
+        },
+        "ASRLaunchTemplate": {
+            "Type": "AWS::EC2::LaunchTemplate",
+            "Properties": {
+                "LaunchTemplateData": {
+                    "ImageId": "ami-09b282117fdc89b0e",
+                    "InstanceType": "c5.2xlarge",
+                    "KeyName": {
+                        "Ref": "KeypairParameter"
+                    },
+                    "SecurityGroupIds": [
+                        {
+                            "Fn::GetAtt": [
+                                "WorkerSG",
+                                "GroupId"
+                            ]
+                        }
+                    ],
+                    "UserData": {
+                        "Fn::Base64": {
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "#!/bin/bash -xe\n",
+                                    "sudo service docker start\n",
+                                    "sudo docker rm asrmon -f\n",
+                                    "sudo docker run -d --name asrmon --restart unless-stopped --env ASRMON_LOCALIP=",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "Gateway",
+                                            "PublicIp"
+                                        ]
+                                    },
+                                    " --env MY_PRIVATE_IP=",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "Gateway",
+                                            "PublicIp"
+                                        ]
+                                    },
+                                    " --env ASRMON_PRESENCE=http://",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "Gateway",
+                                            "PublicIp"
+                                        ]
+                                    },
+                                    ":5000/admin/asrmonreg --env APPTEK_LICENSE=",
+                                    {
+                                        "Ref": "AppTekLicenseParameter"
+                                    },
+                                    " --env ASRMON_KEEPLOG=1 -p 9090:9090 --mount type=bind,source=/home/ec2-user/ASR,target=/opt/apptek/ASR -d apptekasr:prem-20210716\n",
+                                    "\n"
+                                ]
+                            ]
+                        }
+                    }
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "c4ff5870-b9e4-47c4-be74-2b7d60ab3d8a"
+                }
+            }
+        },
+        "EFSMT": {
+            "Type": "AWS::EFS::MountTarget",
+            "Properties": {
+                "SecurityGroups": [
+                    {
+                        "Ref": "GatewaySG"
+                    }
+                ],
+                "FileSystemId": {
+                    "Ref": "AppTekEFS"
+                },
+                "SubnetId": {
+                    "Ref": "SubnetIdParameter"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "edae632c-4196-471c-a8cd-8becde5fdb68"
+                }
+            }
+        }
+    }
+}
